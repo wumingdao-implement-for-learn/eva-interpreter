@@ -68,7 +68,8 @@ export class Eva {
      * Block: sequence of expressions
      */
     if (expr[0] === "begin") {
-      return this._evalBlock(expr, env);
+      const blockEnv = new Environment({}, env);
+      return this._evalBlock(expr, blockEnv);
     }
 
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
@@ -78,8 +79,6 @@ export class Eva {
     let result;
 
     const [_tag, ...expressions] = block;
-
-    // console.log(expressions);
 
     expressions.forEach((expr) => {
       result = this.eval(expr, env);
