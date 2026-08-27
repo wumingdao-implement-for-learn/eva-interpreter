@@ -37,6 +37,18 @@ export class Eva {
       return this.eval(expr[1]) + this.eval(expr[2]);
     }
 
+    if (expr[0] === "-") {
+      return this.eval(expr[1]) - this.eval(expr[2]);
+    }
+
+    if (expr[0] === "*") {
+      return this.eval(expr[1]) * this.eval(expr[2]);
+    }
+
+    if (expr[0] === "/") {
+      return this.eval(expr[1]) / this.eval(expr[2]);
+    }
+
     /**
      * Variables definitions:
      */
@@ -52,7 +64,28 @@ export class Eva {
       return env.lookup(expr);
     }
 
+    /**
+     * Block: sequence of expressions
+     */
+    if (expr[0] === "begin") {
+      return this._evalBlock(expr, env);
+    }
+
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
+  }
+
+  _evalBlock(block, env) {
+    let result;
+
+    const [_tag, ...expressions] = block;
+
+    // console.log(expressions);
+
+    expressions.forEach((expr) => {
+      result = this.eval(expr, env);
+    });
+
+    return result;
   }
 }
 

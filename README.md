@@ -29,4 +29,4 @@ print "hello" -> tokenizer(lexical analysis) -> tokens([{ type: xxx, value: xxx}
 
 ## TODO
 
-- []
+- [] block scope

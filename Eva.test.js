@@ -6,9 +6,18 @@ import { Environment } from "./Environment";
  * Expr ::= Number | String | [+ Number Number] | [+ Expr Expr]
  */
 
-describe("Test self-evaluating expressions", () => {
-  const eva = new Eva();
+const eva = new Eva(
+  new Environment({
+    null: null,
 
+    true: true,
+    false: false,
+
+    VERSION: "0.0.1",
+  }),
+);
+
+describe("Test self-evaluating expressions", () => {
   it("should check numbers for self-evaluation", () => {
     expect(eva.eval(1)).toBe(1);
     expect(eva.eval(0)).toBe(0);
@@ -26,17 +35,6 @@ describe("Test self-evaluating expressions", () => {
 });
 
 describe("Implement Variables", () => {
-  const eva = new Eva(
-    new Environment({
-      null: null,
-
-      true: true,
-      false: false,
-
-      VERSION: "0.0.1",
-    }),
-  );
-
   it("should implement definition of variables", () => {
     expect(eva.eval(["var", "x", 1])).toBe(1);
   });
@@ -60,5 +58,13 @@ describe("Implement Variables", () => {
 
   it("should correctly complex expression with variables", () => {
     expect(eva.eval(["var", "x", ["+", 1, 2]])).toBe(3);
+  });
+});
+
+describe("Implement Block Scope", () => {
+  it("should begin block scope", () => {
+    expect(
+      eva.eval(["begin", ["var", "x", 10], ["var", "y", 20], ["+", ["*", "x", "y"], 30]]),
+    ).toBe(230);
   });
 });
