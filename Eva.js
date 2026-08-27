@@ -34,19 +34,19 @@ export class Eva {
      * like: Expr ::= [+ Expr Expr]
      */
     if (expr[0] === "+") {
-      return this.eval(expr[1]) + this.eval(expr[2]);
+      return this.eval(expr[1], env) + this.eval(expr[2], env);
     }
 
     if (expr[0] === "-") {
-      return this.eval(expr[1]) - this.eval(expr[2]);
+      return this.eval(expr[1], env) - this.eval(expr[2], env);
     }
 
     if (expr[0] === "*") {
-      return this.eval(expr[1]) * this.eval(expr[2]);
+      return this.eval(expr[1], env) * this.eval(expr[2], env);
     }
 
     if (expr[0] === "/") {
-      return this.eval(expr[1]) / this.eval(expr[2]);
+      return this.eval(expr[1], env) / this.eval(expr[2], env);
     }
 
     /**
