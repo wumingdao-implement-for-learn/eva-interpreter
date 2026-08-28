@@ -71,4 +71,12 @@ describe("Implement Block Scope", () => {
   it("should not access variables outside block scope", () => {
     expect(eva.eval(["begin", ["var", "x", 10], ["begin", ["var", "x", 20], "x"], "x"])).toBe(10);
   });
+
+  it("should access variables of parent block scope", () => {
+    expect(eva.eval(["begin", ["var", "x", 10], ["begin", "x"]])).toBe(10);
+  });
+
+  it("should assign variables", () => {
+    expect(eva.eval(["begin", ["var", "x", 10], ["begin", ["set", "x", 20], "x"]])).toBe(20);
+  });
 });

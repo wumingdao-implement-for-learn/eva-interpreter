@@ -54,7 +54,8 @@ export class Eva {
      */
     if (expr[0] === "var") {
       const [_, name, value] = expr; // [var, name, value] = expr;
-      return env.define(name, this.eval(value));
+      // console.log(this.eval(name));
+      return env.define(name, this.eval(value, env)); // why not use define(this.eval(name), this.eval(value))? becase it caLL isVariableName->lookup-relosve->not defined "name"
     }
 
     /**
@@ -62,6 +63,14 @@ export class Eva {
      */
     if (isVariableName(expr)) {
       return env.lookup(expr);
+    }
+
+    /**
+     *  Assignments to variables: (set x 10)
+     */
+    if (expr[0] === "set") {
+      const [_, name, value] = expr; // [set, name, value] = expr;
+      return env.assign(name, this.eval(value, env));
     }
 
     /**

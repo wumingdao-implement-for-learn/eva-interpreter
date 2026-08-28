@@ -20,13 +20,29 @@ export class Environment {
   }
 
   /**
+   * Updates existing variable
+   */
+  assign(name, value) {
+    this.resolve(name).record[name] = value;
+    return value;
+  }
+
+  /**
    * returns the value of a variable, or throws
    * if the variable is not defined
    */
   lookup(name) {
+    return this.resolve(name).record[name];
+  }
+
+  resolve(name) {
     if (!this.record.hasOwnProperty(name)) {
+      if (this.parent) {
+        return this.parent.resolve(name);
+      }
       throw new ReferenceError(`Variable "${name}" is not defined`);
     }
-    return this.record[name];
+
+    return this;
   }
 }

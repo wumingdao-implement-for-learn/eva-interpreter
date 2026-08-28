@@ -29,4 +29,11 @@ print "hello" -> tokenizer(lexical analysis) -> tokens([{ type: xxx, value: xxx}
 
 ## TODO
 
-- [] block scope
+- [x] Self-evaluating expressions: number, string
+
+- [x] Math-operations: (+, 5, 6)
+- [x] Block-scope: [record, parent], environment
+- [x] Variables
+  - [x] definitions: (var, x, 10)
+  - [x] access: (x)
+  - [x] assigments: (set, x, 10)
