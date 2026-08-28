@@ -210,4 +210,20 @@ describe("Implement Function", () => {
 
     expect(eva.eval(code)).toBe(200);
   });
+
+  it("should can use recursive function", () => {
+    const code = parser(`(
+        begin
+          (fn factorial (n)
+            (if (= n 1) 
+              1
+              (* n (factorial (- n 1)))
+            )
+          )
+
+          (factorial 5)
+      )`);
+
+    expect(eva.eval(code)).toBe(120);
+  });
 });

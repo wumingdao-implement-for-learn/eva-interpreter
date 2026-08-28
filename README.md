@@ -88,6 +88,10 @@ const lam = () => {};
 (lamba <args> <body>)
 )
 
+### stack call
+
+Debugger
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -102,8 +106,9 @@ const lam = () => {};
   - [x] if: (if, (>, x, y), (var, x, 10), (var, x, 20), x)
   - [x] while: (while, condition, body)
 - [x] parser (use pn add -g syntax-cli)
-- [ ] Function
+- [x] Function
   - [x] built-in function: (print "hello world")
   - [x] User Defintion Function
   - [x] Implement Closure
-  - [ ] Lambda function: (lamba (x) (* x x))
+  - [x] Lambda function: (lamba (x) (* x x))
+  - [x] Recursive function
