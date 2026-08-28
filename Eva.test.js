@@ -80,3 +80,37 @@ describe("Implement Block Scope", () => {
     expect(eva.eval(["begin", ["var", "x", 10], ["begin", ["set", "x", 20], "x"]])).toBe(20);
   });
 });
+
+describe("Implement Conditional Expressions", () => {
+  it("should implement if expression", () => {
+    expect(
+      eva.eval([
+        "begin",
+        ["var", "x", 10],
+        ["var", "y", 0],
+        ["if", [">", "x", "y"], ["set", "y", 10], ["set", "y", 20]],
+        "y",
+      ]),
+    ).toBe(10);
+  });
+
+  it("should implement while expression", () => {
+    expect(
+      eva.eval([
+        "begin",
+        ["var", "counter", 0],
+        ["var", "result", 0],
+
+        [
+          "while",
+          ["<", "counter", 10],
+          // result++
+          // TODO: implement ["++", <Expr>]
+
+          ["begin", ["set", "result", ["+", "result", 1]], ["set", "counter", ["+", "counter", 1]]],
+        ],
+        "result",
+      ]),
+    ).toBe(10);
+  });
+});

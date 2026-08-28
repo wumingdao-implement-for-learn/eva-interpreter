@@ -32,8 +32,11 @@ print "hello" -> tokenizer(lexical analysis) -> tokens([{ type: xxx, value: xxx}
 - [x] Self-evaluating expressions: number, string
 
 - [x] Math-operations: (+, 5, 6)
-- [x] Block-scope: [record, parent], environment
+- [x] Block-scope: [record, parent], environment, (begin, ....)
 - [x] Variables
   - [x] definitions: (var, x, 10)
   - [x] access: (x)
   - [x] assigments: (set, x, 10)
+- [x] Control
+  - [x] if: (if, (>, x, y), (var, x, 10), (var, x, 20), x)
+  - [x] while: (while, condition, body)

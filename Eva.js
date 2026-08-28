@@ -50,6 +50,36 @@ export class Eva {
     }
 
     /**
+     * Comparison operations: (>, x, y)
+     *
+     * like: Expr ::= [> Expr Expr]
+     */
+
+    if (expr[0] === "<") {
+      return this.eval(expr[1], env) < this.eval(expr[2], env);
+    }
+
+    if (expr[0] === ">") {
+      return this.eval(expr[1], env) > this.eval(expr[2], env);
+    }
+
+    if (expr[0] === "<=") {
+      return this.eval(expr[1], env) <= this.eval(expr[2], env);
+    }
+
+    if (expr[0] === ">=") {
+      return this.eval(expr[1], env) >= this.eval(expr[2], env);
+    }
+
+    if (expr[0] === "=") {
+      return this.eval(expr[1], env) === this.eval(expr[2], env);
+    }
+
+    if (expr[0] === "!=") {
+      return this.eval(expr[1], env) !== this.eval(expr[2], env);
+    }
+
+    /**
      * Variables definitions:
      */
     if (expr[0] === "var") {
@@ -79,6 +109,27 @@ export class Eva {
     if (expr[0] === "begin") {
       const blockEnv = new Environment({}, env);
       return this._evalBlock(expr, blockEnv);
+    }
+
+    /**
+     * if expression: [if, condition, consequent, alternative]
+     */
+    if (expr[0] === "if") {
+      const [_tag, condition, consequent, alternative] = expr;
+      return this.eval(condition, env) ? this.eval(consequent, env) : this.eval(alternative, env);
+    }
+
+    /**
+     * while expression: [while, condition, body]
+     */
+    if (expr[0] === "while") {
+      let result;
+      const [_tag, condition, body] = expr;
+      while (this.eval(condition, env)) {
+        this.eval(body, env);
+      }
+
+      return result;
     }
 
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
