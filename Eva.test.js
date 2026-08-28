@@ -128,4 +128,51 @@ describe("Implement Function", () => {
   it("should can use built-in functions", () => {
     eva.eval(["print", '"hello world"']);
   });
+
+  it("should can use user-defined functions of body for expression", () => {
+    const code = parser(`(begin 
+    (fn square (x) (* x x))
+    (square 2)
+      )`);
+
+    expect(eva.eval(code)).toBe(4);
+  });
+
+  it("should can use user-defined functions of body for new block scope", () => {
+    const code = parser(`(begin 
+    (fn calc (x y) 
+      (begin
+        (var z 30)
+        (+ (* x y) z)
+      )
+    )
+    (calc 10 20)
+      )`);
+
+    expect(eva.eval(code)).toBe(230);
+  });
+
+  it("should can use user-defined functions of body for closure", () => {
+    const code = parser(`
+      (begin 
+        (var value 100)
+        (fn calc (x y) 
+          (begin
+            (var z (+ x y))
+
+            (fn inner (foo)
+              (+ (+ foo z) value))
+
+              inner
+            ))
+
+        (var def (calc 10 20))
+
+        (def 30)
+      )`);
+
+    console.log(code);
+
+    expect(eva.eval(code)).toEqual(160);
+  });
 });

@@ -82,6 +82,21 @@ export class Eva {
     }
 
     /**
+     * Function Definition: (fn square (x) (* x x))
+     */
+    if (expr[0] === "fn") {
+      const [_tag, name, params, body] = expr;
+
+      const fn = {
+        params,
+        body,
+        env, // closure
+      };
+
+      return env.define(name, fn);
+    }
+
+    /**
      * Function Call:
      *
      * (print "hello world")
@@ -100,6 +115,18 @@ export class Eva {
 
       // 2. User defined functions
       // TODO:
+      const activationRecord = {};
+
+      fn.params.forEach((param, index) => {
+        activationRecord[param] = args[index];
+      });
+
+      const activationEnv = new Environment(
+        activationRecord,
+        fn.env /* this staitc scope ? env dynamic scope*/,
+      );
+
+      return this._evalBody(fn.body, activationEnv);
     }
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
   }
@@ -107,6 +134,14 @@ export class Eva {
   /**
    * built-in functions
    */
+  _evalBody(body, env) {
+    if (body[0] === "begin") {
+      return this._evalBlock(body, env);
+    }
+
+    return this.eval(body, env);
+  }
+
   _evalBlock(block, env) {
     let result;
 

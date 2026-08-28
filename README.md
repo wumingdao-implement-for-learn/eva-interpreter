@@ -41,6 +41,25 @@ syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaPars
 globl call like print / operations
 custom opreations in local environment
 
+```javascript
+{
+  let value = 100;
+  function calc(x, y) {
+    let z = z + y;
+
+    function inner(foo) {
+      value + (foo + z);
+    }
+
+    inner;
+  }
+
+  const fn = calc(10, 20);
+
+  fn(30);
+}
+```
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -57,4 +76,5 @@ custom opreations in local environment
 - [x] parser (use pn add -g syntax-cli)
 - [ ] Function
   - [x] built-in function: (print "hello world")
-  - [ ] User Defintion Function
+  - [x] User Defintion Function
+  - [x] Implement Closure
