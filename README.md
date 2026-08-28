@@ -36,6 +36,11 @@ syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaPars
 
 ```
 
+## Function
+
+globl call like print / operations
+custom opreations in local environment
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -50,3 +55,6 @@ syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaPars
   - [x] if: (if, (>, x, y), (var, x, 10), (var, x, 20), x)
   - [x] while: (while, condition, body)
 - [x] parser (use pn add -g syntax-cli)
+- [ ] Function
+  - [x] built-in function: (print "hello world")
+  - [ ] User Defintion Function

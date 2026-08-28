@@ -7,7 +7,7 @@ export class Eva {
   /**
    *  Creates an Eva instance with the global environment
    */
-  constructor(global = new Environment()) {
+  constructor(global = GlobalEnvironment) {
     this.global = global;
   }
 
@@ -20,63 +20,12 @@ export class Eva {
      *
      * like: Expr ::= Number | String
      */
-    if (isNumber(expr)) {
+    if (this._isNumber(expr)) {
       return expr;
     }
 
-    if (isString(expr)) {
+    if (this._isString(expr)) {
       return expr.slice(1, -1);
-    }
-
-    /**
-     * Math Operations:
-     *
-     * like: Expr ::= [+ Expr Expr]
-     */
-    if (expr[0] === "+") {
-      return this.eval(expr[1], env) + this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "-") {
-      return this.eval(expr[1], env) - this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "*") {
-      return this.eval(expr[1], env) * this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "/") {
-      return this.eval(expr[1], env) / this.eval(expr[2], env);
-    }
-
-    /**
-     * Comparison operations: (>, x, y)
-     *
-     * like: Expr ::= [> Expr Expr]
-     */
-
-    if (expr[0] === "<") {
-      return this.eval(expr[1], env) < this.eval(expr[2], env);
-    }
-
-    if (expr[0] === ">") {
-      return this.eval(expr[1], env) > this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "<=") {
-      return this.eval(expr[1], env) <= this.eval(expr[2], env);
-    }
-
-    if (expr[0] === ">=") {
-      return this.eval(expr[1], env) >= this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "=") {
-      return this.eval(expr[1], env) === this.eval(expr[2], env);
-    }
-
-    if (expr[0] === "!=") {
-      return this.eval(expr[1], env) !== this.eval(expr[2], env);
     }
 
     /**
@@ -91,7 +40,7 @@ export class Eva {
     /**
      * Variables access:
      */
-    if (isVariableName(expr)) {
+    if (this._isVariableName(expr)) {
       return env.lookup(expr);
     }
 
@@ -132,9 +81,32 @@ export class Eva {
       return result;
     }
 
+    /**
+     * Function Call:
+     *
+     * (print "hello world")
+     * (+ 5 3)
+     * (> foo bar)
+     */
+    if (Array.isArray(expr)) {
+      const fn = this.eval(expr[0], env);
+
+      const args = expr.slice(1).map((arg) => this.eval(arg, env));
+
+      // 1. Native functions
+      if (typeof fn === "function") {
+        return fn(...args);
+      }
+
+      // 2. User defined functions
+      // TODO:
+    }
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
   }
 
+  /**
+   * built-in functions
+   */
   _evalBlock(block, env) {
     let result;
 
@@ -146,16 +118,73 @@ export class Eva {
 
     return result;
   }
+
+  _isVariableName(expr) {
+    return typeof expr === "string" && /^[+\-*/<>=a-zA-Z][a-zA-Z0-9_]*$/.test(expr);
+  }
+
+  _isNumber(expr) {
+    return typeof expr === "number";
+  }
+  _isString(expr) {
+    return typeof expr === "string" && expr.startsWith('"') && expr.endsWith('"');
+  }
 }
 
-function isVariableName(expr) {
-  return typeof expr === "string" && /^[a-zA-Z][a-zA-Z0-9_]*$/.test(expr);
-}
+/**
+ * Default Global Environment
+ */
 
-function isNumber(expr) {
-  return typeof expr === "number";
-}
+const GlobalEnvironment = new Environment({
+  null: null,
+  true: true,
+  false: false,
+  VERSION: "0.0.1",
 
-function isString(expr) {
-  return typeof expr === "string" && expr.startsWith('"') && expr.endsWith('"');
-}
+  // Opreators:
+  "+": (op1, op2) => {
+    return op1 + op2;
+  },
+
+  "-": (op1, op2) => {
+    if (op2 === null) {
+      return -op1;
+    }
+    return op1 - op2;
+  },
+
+  "*": (op1, op2) => {
+    return op1 * op2;
+  },
+
+  "/": (op1, op2) => {
+    return op1 / op2;
+  },
+
+  // Comparison:
+
+  ">": (op1, op2) => {
+    return op1 > op2;
+  },
+
+  "<": (op1, op2) => {
+    return op1 < op2;
+  },
+
+  ">=": (op1, op2) => {
+    return op1 >= op2;
+  },
+
+  "<=": (op1, op2) => {
+    return op1 <= op2;
+  },
+
+  "=": (op1, op2) => {
+    return op1 === op2;
+  },
+
+  // Console output:
+  print(...args) {
+    console.log(...args);
+  },
+});

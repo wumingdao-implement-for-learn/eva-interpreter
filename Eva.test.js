@@ -7,16 +7,9 @@ import evaParser from "./parser/evaParser";
  * Expr ::= Number | String | [+ Number Number] | [+ Expr Expr]
  */
 
-const eva = new Eva(
-  new Environment({
-    null: null,
+const eva = new Eva();
 
-    true: true,
-    false: false,
-
-    VERSION: "0.0.1",
-  }),
-);
+const parser = (code) => evaParser.parse(code);
 
 describe("Test self-evaluating expressions", () => {
   it("should check numbers for self-evaluation", () => {
@@ -128,5 +121,11 @@ describe("Implement Parser", () => {
       "(begin (var counter 0) (var result 0) (while (< counter 10) (begin (set result (+ result 1)) (set counter (+ counter 1)))) result)";
     const expr = evaParser.parse(code);
     expect(eva.eval(expr)).toBe(10);
+  });
+});
+
+describe("Implement Function", () => {
+  it("should can use built-in functions", () => {
+    eva.eval(["print", '"hello world"']);
   });
 });
