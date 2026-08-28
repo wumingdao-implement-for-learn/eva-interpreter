@@ -171,8 +171,43 @@ describe("Implement Function", () => {
         (def 30)
       )`);
 
-    console.log(code);
+    // console.log(code);
 
     expect(eva.eval(code)).toEqual(160);
+  });
+
+  it("should can use lambda function", () => {
+    const code = parser(`
+      (begin 
+        
+        (fn onClick (callback) 
+            (begin
+              (var x 10)
+              (var y 20)
+              (callback (+ x y))
+            )
+        )
+
+        (onClick (lambda (data) (* data 10)))
+      )`);
+
+    expect(eva.eval(code)).toBe(300);
+  });
+
+  it("should can use IILE function", () => {
+    const code = parser(`((lambda (x y) (* x y)) 10 20)`);
+
+    expect(eva.eval(code)).toBe(200);
+  });
+
+  it("should save variables in IILE function", () => {
+    const code = parser(`(
+        begin
+          (var def (lambda (x y) (* x y)))
+
+          (def 10 20)
+      )`);
+
+    expect(eva.eval(code)).toBe(200);
   });
 });

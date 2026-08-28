@@ -41,6 +41,8 @@ syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaPars
 globl call like print / operations
 custom opreations in local environment
 
+### closure
+
 ```javascript
 {
   let value = 100;
@@ -60,6 +62,32 @@ custom opreations in local environment
 }
 ```
 
+### lamba function and common function
+
+syntactic sugar
+
+```js
+function com() {}
+
+const lam = () => {};
+```
+
+```lsip
+(fn com (x) (* x x))
+
+=>
+
+(var lam (lamba (x) (* x x)))
+```
+
+(fn <name> <args> <body>)
+
+=>
+
+(var <name>
+(lamba <args> <body>)
+)
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -78,3 +106,4 @@ custom opreations in local environment
   - [x] built-in function: (print "hello world")
   - [x] User Defintion Function
   - [x] Implement Closure
+  - [ ] Lambda function: (lamba (x) (* x x))

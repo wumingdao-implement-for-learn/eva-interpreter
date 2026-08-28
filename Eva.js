@@ -83,17 +83,39 @@ export class Eva {
 
     /**
      * Function Definition: (fn square (x) (* x x))
+     *
+     * syntactic sugar for (var square (lambda (x) (* x x)))
      */
     if (expr[0] === "fn") {
       const [_tag, name, params, body] = expr;
 
-      const fn = {
+      // orld implementation
+      // const fn = {
+      //   params,
+      //   body,
+      //   env, // closure
+      // };
+
+      // return env.define(name, fn);
+
+      // JIT-transpile to a variable definition
+
+      const varExpr = ["var", name, ["lambda", params, body]];
+
+      return this.eval(varExpr, env);
+    }
+
+    /**
+     * Lambda Function Definition: (lambda (x) (* x x))
+     */
+    if (expr[0] === "lambda") {
+      const [_tag, params, body] = expr;
+
+      return {
         params,
         body,
         env, // closure
       };
-
-      return env.define(name, fn);
     }
 
     /**
