@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { Eva } from "./Eva";
 import { Environment } from "./Environment";
+import evaParser from "./parser/evaParser";
 
 /**
  * Expr ::= Number | String | [+ Number Number] | [+ Expr Expr]
@@ -112,5 +113,20 @@ describe("Implement Conditional Expressions", () => {
         "result",
       ]),
     ).toBe(10);
+  });
+});
+
+describe("Implement Parser", () => {
+  it("should parse expression", () => {
+    const code = "(+ 2 10)";
+    const expr = evaParser.parse(code);
+    expect(eva.eval(expr)).toBe(12);
+  });
+
+  it("should parse while expression", () => {
+    const code =
+      "(begin (var counter 0) (var result 0) (while (< counter 10) (begin (set result (+ result 1)) (set counter (+ counter 1)))) result)";
+    const expr = evaParser.parse(code);
+    expect(eva.eval(expr)).toBe(10);
   });
 });

@@ -27,6 +27,15 @@ print "hello" -> tokenizer(lexical analysis) -> tokens([{ type: xxx, value: xxx}
 2. just-in-time(JIT)
 3. AST-transformers
 
+## parser
+
+```zsh
+pn add -g syntax-cli
+syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --parse '"Hello"' --tokenize
+syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaParser.js
+
+```
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -40,3 +49,4 @@ print "hello" -> tokenizer(lexical analysis) -> tokens([{ type: xxx, value: xxx}
 - [x] Control
   - [x] if: (if, (>, x, y), (var, x, 10), (var, x, 20), x)
   - [x] while: (while, condition, body)
+- [x] parser (use pn add -g syntax-cli)
