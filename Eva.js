@@ -1,4 +1,5 @@
 import { Environment } from "./Environment.js";
+import { Transformer } from "./Transformer.js";
 
 /**
  * Eva interpreter
@@ -9,6 +10,7 @@ export class Eva {
    */
   constructor(global = GlobalEnvironment) {
     this.global = global;
+    this._tranformer = new Transformer();
   }
 
   /**
@@ -87,8 +89,6 @@ export class Eva {
      * syntactic sugar for (var square (lambda (x) (* x x)))
      */
     if (expr[0] === "fn") {
-      const [_tag, name, params, body] = expr;
-
       // orld implementation
       // const fn = {
       //   params,
@@ -100,7 +100,7 @@ export class Eva {
 
       // JIT-transpile to a variable definition
 
-      const varExpr = ["var", name, ["lambda", params, body]];
+      const varExpr = this._tranformer.transformFnToLambda(expr);
 
       return this.eval(varExpr, env);
     }
