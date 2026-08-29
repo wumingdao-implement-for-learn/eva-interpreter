@@ -1,6 +1,8 @@
 import { Environment } from "./Environment.js";
 import { Transformer } from "./Transformer.js";
 
+import { log } from "./log.js";
+
 /**
  * Eva interpreter
  */
@@ -77,9 +79,10 @@ export class Eva {
       let result;
       const [_tag, condition, body] = expr;
       while (this.eval(condition, env)) {
-        this.eval(body, env);
+        result = this.eval(body, env);
       }
 
+      // console.log(result);
       return result;
     }
 
@@ -103,6 +106,68 @@ export class Eva {
       const varExpr = this._tranformer.transformFnToLambda(expr);
 
       return this.eval(varExpr, env);
+    }
+
+    /**
+     * Switch Expression: (switch (cond1 block1) .....)
+     */
+    if (expr[0] === "switch") {
+      const ifExpr = this._tranformer.transformSwitchToIf(expr);
+
+      return this.eval(ifExpr, env);
+    }
+
+    /**
+     * for Expression: (for (var i 0) (< i 10) (begin (print i) (set i (+ i 1))))
+     */
+    if (expr[0] === "for") {
+      const forExpr = this._tranformer.transformForToWhile(expr);
+
+      return this.eval(forExpr, env);
+    }
+
+    /**
+     * decrement: (-- x)
+     *
+     * syntactic sugar for (set x (- x 1))
+     */
+    if (expr[0] == "--") {
+      const setExpr = this._tranformer.transformDecrementToSet(expr);
+
+      return this.eval(setExpr, env);
+    }
+
+    /**
+     * increment: (-= x y)
+     *
+     * syntactic sugar for (set x (- x y))
+     */
+    if (expr[0] == "-=") {
+      const setExpr = this._tranformer.transformDecValToSet(expr);
+
+      return this.eval(setExpr, env);
+    }
+
+    /**
+     * increment: (++ x)
+     *
+     * syntactic sugar for (set x (+ x 1))
+     */
+    if (expr[0] == "++") {
+      const setExpr = this._tranformer.transformIncrementToSet(expr);
+
+      return this.eval(setExpr, env);
+    }
+
+    /**
+     * increment: (+= x y)
+     *
+     * syntactic sugar for (set x (+ x y))
+     */
+    if (expr[0] == "+=") {
+      const setExpr = this._tranformer.transformIncValToSet(expr);
+
+      return this.eval(setExpr, env);
     }
 
     /**

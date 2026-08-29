@@ -227,3 +227,81 @@ describe("Implement Function", () => {
     expect(eva.eval(code)).toBe(120);
   });
 });
+
+describe("Implement syntax sugar", () => {
+  it("should can use --", () => {
+    const code = parser(`(
+        begin
+          (var x 10)
+
+          (-- x)
+      )`);
+
+    expect(eva.eval(code)).toBe(9);
+  });
+
+  it("should can use ++", () => {
+    const code = parser(`(
+        begin
+          (var x 10)
+
+          (++ x)
+      )`);
+
+    expect(eva.eval(code)).toBe(11);
+  });
+
+  it("should can use +=", () => {
+    const code = parser(`(
+        begin
+          (var x 10)
+          (var y 20)
+          (+= x y)
+      )`);
+
+    expect(eva.eval(code)).toBe(30);
+  });
+
+  it("should can use -=", () => {
+    const code = parser(`(
+        begin
+          (var x 10)
+          (var y 20)
+          (-= x y)
+      )`);
+
+    expect(eva.eval(code)).toBe(-10);
+  });
+
+  it("should can use switch condition", () => {
+    const code = parser(`(
+        begin
+          (var x 10)
+
+          (switch ((= x 10) 100)
+                  ((> x 20) 200)
+                  (else 300))
+      )`);
+
+    expect(eva.eval(code)).toBe(100);
+  });
+
+  it("should can use for loop", () => {
+    const code = parser(`(
+        for (var i 0) (< i 10) (++ i) (print i)
+      )`);
+
+    /**
+     * `(
+     *
+     * (for (var i 0) (< i 10) (++ i) (print i))
+     *
+     * )`
+     *
+     * why this not ok? becase: it to expr = [[for, init, cond, update, body]], it expr[0] is Array
+     * 2026-08-29
+     */
+
+    expect(eva.eval(code)).toBe(10);
+  });
+});

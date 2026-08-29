@@ -88,6 +88,22 @@ const lam = () => {};
 (lamba <args> <body>)
 )
 
+#### for loop:
+
+```
+(for <init> <condition> <modifier> <exp>) =>
+
+(begin
+  <init>
+  (while <condition>
+    (begin
+      <exp>
+      <modifier>
+    )
+  )
+)
+```
+
 ### stack call
 
 Debugger
@@ -112,3 +128,8 @@ Debugger
   - [x] Implement Closure
   - [x] Lambda function: (lamba (x) (* x x))
   - [x] Recursive function
+- [x] Syntax sugar (Transformer)
+  - [x] swtich condition
+  - [x] for loop
+  - [x] Inc: ++ +=
+  - [x] Dnc: -- +=
