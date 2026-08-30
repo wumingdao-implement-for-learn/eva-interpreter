@@ -38,6 +38,8 @@ syntax-cli --grammar parser/eva-grammar.bnf --mode LALR1 --output parser/evaPars
 
 ## Function
 
+first function
+
 globl call like print / operations
 custom opreations in local environment
 
@@ -108,6 +110,11 @@ const lam = () => {};
 
 Debugger
 
+## OOP
+
+1. Class-base OOP
+2. Prototype-base OOP
+
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
@@ -133,3 +140,6 @@ Debugger
   - [x] for loop
   - [x] Inc: ++ +=
   - [x] Dnc: -- +=
+- [ ] OOP
+  - [x] Class-base OOP: class, new, prop, modify fn of user def function call and set keyword of name to ref
+  - [ ] Prototype OOP

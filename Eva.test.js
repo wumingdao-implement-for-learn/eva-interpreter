@@ -305,3 +305,31 @@ describe("Implement syntax sugar", () => {
     expect(eva.eval(code)).toBe(10);
   });
 });
+
+describe("Implement OOP", () => {
+  it.only("should can use class", () => {
+    const code = parser(`(begin
+        (class Point null
+          (begin
+             (fn constructor (this x y)
+              (begin
+                (set (prop this x) x)
+                (set (prop this y) y)
+              )
+            )
+
+            (fn calc (this)
+              (+ (prop this x) (prop this y))
+            )
+          )
+         
+        )
+
+        (var p (new Point 10 20))
+        ((prop p calc) p)
+      )`);
+
+    expect(eva.eval(code)).toBe(30);
+  });
+  it("should can use prototype", () => {});
+});

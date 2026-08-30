@@ -52,8 +52,18 @@ export class Eva {
      *  Assignments to variables: (set x 10)
      */
     if (expr[0] === "set") {
-      const [_, name, value] = expr; // [set, name, value] = expr;
-      return env.assign(name, this.eval(value, env));
+      // this name: variable name or property name
+      const [_, ref, value] = expr; // [set, name, value] = expr;
+
+      // Assignments to properties:
+      if (ref[0] === "prop") {
+        const [_tag, instance, propName] = ref;
+        const instanceEnv = this.eval(instance, env);
+
+        return instanceEnv.define(propName, this.eval(value, env));
+      }
+
+      return env.assign(ref, this.eval(value, env));
     }
 
     /**
@@ -184,6 +194,58 @@ export class Eva {
     }
 
     /**
+     * Class definition: (<class><name><parent><body>)
+     */
+    if (expr[0] === "class") {
+      const [_tag, name, parent, body] = expr;
+
+      // class is environment! -- a storage of methods and shared properties:
+
+      const parentEnv = this.eval(parent, env) || env;
+
+      const classEnv = new Environment({}, parentEnv);
+
+      // body is evaluated in the class environment
+
+      this._evalBody(body, classEnv);
+
+      // Class is accessible by name
+
+      return env.define(name, classEnv);
+    }
+
+    /**
+     * Class instantiation: (<new><class><args>...)
+     */
+    if (expr[0] === "new") {
+      const classNev = this.eval(expr[1], env);
+
+      // An instance of a class is an environment!
+      // The parent component of the instance environment is set to its class.
+
+      const instanceEnv = new Environment({}, classNev);
+
+      const args = expr.slice(2).map((arg) => this.eval(arg, env));
+
+      this._callUserDefinedFunction(classNev.lookup("constructor"), [instanceEnv, ...args]);
+
+      return instanceEnv;
+    }
+
+    /**
+     * Property access: (prop <instance> <name>)
+     */
+    if (expr[0] === "prop") {
+      const [_tag, instance, name] = expr;
+
+      const instanceEnv = this.eval(instance, env);
+
+      return instanceEnv.lookup(name);
+    }
+
+    /**
+     * this is all keyword not end
+     *
      * Function Call:
      *
      * (print "hello world")
@@ -201,26 +263,30 @@ export class Eva {
       }
 
       // 2. User defined functions
-      // TODO:
-      const activationRecord = {};
-
-      fn.params.forEach((param, index) => {
-        activationRecord[param] = args[index];
-      });
-
-      const activationEnv = new Environment(
-        activationRecord,
-        fn.env /* this staitc scope ? env dynamic scope*/,
-      );
-
-      return this._evalBody(fn.body, activationEnv);
+      return this._callUserDefinedFunction(fn, args);
     }
+
     throw new Error(`Not implemented ${JSON.stringify(expr)}`);
   }
 
   /**
    * built-in functions
    */
+  _callUserDefinedFunction(fn, args) {
+    const activationRecord = {};
+
+    fn.params.forEach((param, index) => {
+      activationRecord[param] = args[index];
+    });
+
+    const activationEnv = new Environment(
+      activationRecord,
+      fn.env /* this staitc scope ? env dynamic scope*/,
+    );
+
+    return this._evalBody(fn.body, activationEnv);
+  }
+
   _evalBody(body, env) {
     if (body[0] === "begin") {
       return this._evalBlock(body, env);
