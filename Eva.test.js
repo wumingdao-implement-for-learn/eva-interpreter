@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Eva } from "./Eva";
-import evaParser from "./parser/evaParser";
+import evaParser from "./parser/evaParser.cjs";
 
 /**
  * Expr ::= Number | String | [+ Number Number] | [+ Expr Expr]

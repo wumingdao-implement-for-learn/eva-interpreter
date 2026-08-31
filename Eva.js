@@ -1,10 +1,16 @@
 import { Environment } from "./Environment.js";
 import { Transformer } from "./Transformer.js";
 
-import { syncReadFile } from "node:fs/promises";
-import evaParser from "./parser/evaParser";
+// import { syncReadFile } from "node:fs/promises";
+// import evaParser from "./parser/evaParser";
+
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
+const evaParser = require("./parser/evaParser.cjs");
 
 import { log } from "./log.js";
+// import { readFileSync } from "node:fs";
 import { readFileSync } from "node:fs";
 
 const parser = (code) => evaParser.parse(code);
@@ -324,7 +330,7 @@ export class Eva {
     if (expr[0] === "import") {
       const [_tag, moduleName] = expr;
 
-      const module = readFileSync(`${__dirname}/modules/${moduleName}.eva`, "utf-8");
+      const module = readFileSync(`${process.cwd()}/modules/${moduleName}.eva`, "utf-8");
 
       const body = parser(`(begin ${module})`);
 
