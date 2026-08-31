@@ -364,7 +364,7 @@ describe("Implement OOP", () => {
     expect(eva.eval(code)).toBe(30);
   });
 
-  it.only("should can use prototype", () => {
+  it("should can use prototype", () => {
     const code = parser(`(begin
          (class Point null
           (begin
@@ -418,5 +418,33 @@ describe("Implement OOP", () => {
      */
 
     expect(eva.eval(code)).toBe(60);
+  });
+});
+
+describe("Impement module", () => {
+  it("should can define modele", () => {
+    const code = parser(`(begin
+        (module math (begin
+          (fn abs (value) (if (< value 0) (- value) value))
+          
+          (fn square (value) (* value value))
+
+          (var MAX_VALUE 1000)
+        ))
+
+        ((prop math abs) 10)
+      )`);
+
+    expect(eva.eval(code)).toBe(10);
+  });
+
+  it("should can import modele", () => {
+    const code = parser(`(begin
+        (import Math)
+
+        ((prop Math abs) 10)
+      )`);
+
+    expect(eva.eval(code)).toBe(10);
   });
 });

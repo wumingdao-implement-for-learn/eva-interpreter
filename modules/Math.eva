@@ -1,0 +1,5 @@
+(fn abs (value) (if (< value 0) (- value) value))
+          
+(fn square (value) (* value value))
+
+(var MAX_VALUE 1000)

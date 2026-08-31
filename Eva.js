@@ -1,7 +1,13 @@
 import { Environment } from "./Environment.js";
 import { Transformer } from "./Transformer.js";
 
+import { syncReadFile } from "node:fs/promises";
+import evaParser from "./parser/evaParser";
+
 import { log } from "./log.js";
+import { readFileSync } from "node:fs";
+
+const parser = (code) => evaParser.parse(code);
 
 /**
  * Eva interpreter
@@ -44,7 +50,6 @@ export class Eva {
      */
     if (expr[0] === "var") {
       const [_, name, value] = expr; // [var, name, value] = expr;
-      // console.log(this.eval(name));
       return env.define(name, this.eval(value, env)); // why not use define(this.eval(name), this.eval(value))? becase it caLL isVariableName->lookup-relosve->not defined "name"
     }
 
@@ -65,7 +70,6 @@ export class Eva {
       // Assignments to properties:
       if (ref[0] === "prop") {
         const [_tag, instance, propName] = ref;
-        log.info(env);
         const instanceEnv = this.eval(instance, env);
 
         return instanceEnv.define(propName, this.eval(value, env));
@@ -122,7 +126,6 @@ export class Eva {
       // JIT-transpile to a variable definition
 
       const varExpr = this._tranformer.transformFnToLambda(expr);
-
       return this.eval(varExpr, env);
     }
 
@@ -300,6 +303,34 @@ export class Eva {
       const [_tag, className] = expr;
 
       return this.eval(className, env).parent;
+    }
+
+    /**
+     * Module definition: (module <name> <body>)
+     */
+    if (expr[0] === "module") {
+      const [_tag, name, body] = expr;
+
+      const moduleEnv = new Environment({}, env);
+
+      this._evalBody(body, moduleEnv);
+
+      return env.define(name, moduleEnv);
+    }
+
+    /**
+     * Module import: (<import> <moduleName>)
+     */
+    if (expr[0] === "import") {
+      const [_tag, moduleName] = expr;
+
+      const module = readFileSync(`${__dirname}/modules/${moduleName}.eva`, "utf-8");
+
+      const body = parser(`(begin ${module})`);
+
+      const moduleExpr = ["module", moduleName, body];
+
+      return this.eval(moduleExpr, this.global);
     }
 
     /**

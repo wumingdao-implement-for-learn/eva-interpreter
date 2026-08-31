@@ -143,10 +143,10 @@ Debugger
   - [x] for loop
   - [x] Inc: ++ +=
   - [x] Dnc: -- +=
-- [ ] OOP
+- [x] OOP
   - [x] Class-base OOP: class, new, prop, modify fn of user def function call and set keyword of name to ref
   - [x] Prototype OOP
-- [ ] Modules
-  - [ ] import
-  - [ ] export
+- [x] Modules
+  - [x] import: (<import> <moduleName>) (<import> ...<moduleMethod> <moduleName>)
+  - [x] export
 - [ ] structure
