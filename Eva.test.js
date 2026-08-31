@@ -449,3 +449,23 @@ describe("Impement module", () => {
     expect(eva.eval(code)).toBe(10);
   });
 });
+
+describe("Implement Structure", () => {
+  it.only("should use keywork for structure", () => {
+    const code = parser(`(begin
+        (struct Cat (begin
+          (fn constructor (this name age)
+            (begin
+              (set (prop this name) name)
+              (set (prop this age) age)
+            )
+          )
+        ))
+
+        (var cat (new Cat "Tom" 2))
+        (prop cat name)
+      )`);
+
+    expect(eva.eval(code)).toBe("Tom");
+  });
+});

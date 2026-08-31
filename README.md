@@ -53,6 +53,109 @@ function main(argv) {
 main(process.argv);
 ```
 
+## Eva Syntax
+
+```eva
+
+// 1. Self-Evaluating
+number expr: (10)
+string exprL ("hello world")
+
+// Binary-Operations
+
+// Math
+(+ 10 5)
+(- 10 5) or (- 10)
+(* 10 5)
+(/ 10 5)
+
+// 2. Comparison
+(> 10 5)
+(< 10 5)
+(= 10 5)
+(>= 10 5)
+(<= 10 5)
+(!= 10 5)
+
+// Logic
+(&& 10 5) or (and 10 5)
+(|| 10 5) or (or 10 5)
+(! 10) or (not 10)
+
+// 3. Variables
+
+// Defintion
+(var x 10)
+
+// Access
+(x)
+
+// Assigments
+(set x 10)
+
+// 4.Block Scope: create new environment
+(begin <>...)
+
+// 5. Function
+
+// Built-in function: from globl environment
+(print "Hello World!")
+
+// User Defintion Function
+(<fn><name><param><body>):
+
+(fn squal (x) (* x x))
+(fn squal (x) (begin (* x x) (print x)))
+
+// User Call function
+(squal 10)
+
+// Closure
+  (begin
+    (var value 100)
+    (fn calc (x y)
+      (begin
+        (var z (+ x y))
+
+        (fn inner (foo)
+          (+ (+ foo z) value))
+
+          inner
+        ))
+
+    (var def (calc 10 20))
+
+    (def 30)
+  )
+
+160
+
+// Lambda
+(var def (lamba (x) (+ x x)))
+
+(var x 10)
+(def 10)
+
+20
+
+// Recursive
+(
+  begin
+    (fn factorial (n)
+      (if (= n 1)
+        1
+        (* n (factorial (- n 1)))
+      )
+    )
+
+    (factorial 5)
+)
+
+120
+```
+
+###
+
 ## Intro
 
 runtime semantics
@@ -199,5 +302,5 @@ Debugger
   - [x] Prototype OOP
 - [x] Modules
   - [x] import: (<import> <moduleName>) (<import> ...<moduleMethod> <moduleName>)
-  - [x] export
-- [ ] structure
+  - [ ] export
+- [x] structure

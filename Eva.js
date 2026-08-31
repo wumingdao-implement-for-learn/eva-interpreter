@@ -271,10 +271,22 @@ export class Eva {
     }
 
     /**
+     * Struct definition: (<struct><name><body>)
+     */
+    if (expr[0] === "struct") {
+      const [_tag, name, body] = expr;
+
+      const structEnv = new Environment({}, env);
+
+      this._evalBody(body, structEnv);
+
+      return env.define(name, structEnv);
+    }
+
+    /**
      * Class instantiation: (<new><class><args>...)
      */
     if (expr[0] === "new") {
-      // console.log(expr);
       const classNev = this.eval(expr[1], env);
 
       // An instance of a class is an environment!
