@@ -27,6 +27,7 @@ describe("Implement Binary Operators", () => {
   it("should implement addition for numbers", () => {
     expect(eva.eval(["+", 1, 2])).toBe(3);
     expect(eva.eval(["+", ["+", 3, 2], 5])).toBe(10);
+    expect(eva.eval(["-", 1, 0])).toBe(1);
   });
 
   // Comparison
