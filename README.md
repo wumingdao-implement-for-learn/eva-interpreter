@@ -118,20 +118,23 @@ Debugger
 ## TODO
 
 - [x] Self-evaluating expressions: number, string
-
-- [x] Math-operations: (+, 5, 6)
-- [x] Block-scope: [record, parent], environment, (begin, ....)
+- [x] Binary-operations
+  - [x] math: (+, 5, 6) (-, 5, 6)
+  - [x] comparison: (> 5, 6)
+  - [x] logic: (and false true) (or flase true) (not false)
+- [x] Environment: [record, parent], variable store
 - [x] Variables
   - [x] definitions: (var, x, 10)
   - [x] access: (x)
   - [x] assigments: (set, x, 10)
+- [x] Block-scope: [record, parent], environment, (begin, ....) 1. expression group 2.create environment
 - [x] Control
   - [x] if: (if, (>, x, y), (var, x, 10), (var, x, 20), x)
   - [x] while: (while, condition, body)
 - [x] parser (use pn add -g syntax-cli)
 - [x] Function
   - [x] built-in function: (print "hello world")
-  - [x] User Defintion Function
+  - [x] User Defintion Function and Call function
   - [x] Implement Closure
   - [x] Lambda function: (lamba (x) (* x x))
   - [x] Recursive function
@@ -142,4 +145,8 @@ Debugger
   - [x] Dnc: -- +=
 - [ ] OOP
   - [x] Class-base OOP: class, new, prop, modify fn of user def function call and set keyword of name to ref
-  - [ ] Prototype OOP
+  - [x] Prototype OOP
+- [ ] Modules
+  - [ ] import
+  - [ ] export
+- [ ] structure

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { Eva } from "./Eva";
-import { Environment } from "./Environment";
 import evaParser from "./parser/evaParser";
 
 /**
@@ -21,10 +20,43 @@ describe("Test self-evaluating expressions", () => {
   it("should check string for self-evaluation", () => {
     expect(eva.eval('"hello"')).toBe("hello");
   });
+});
 
+describe("Implement Binary Operators", () => {
+  // Math
   it("should implement addition for numbers", () => {
     expect(eva.eval(["+", 1, 2])).toBe(3);
     expect(eva.eval(["+", ["+", 3, 2], 5])).toBe(10);
+  });
+
+  // Comparison
+  it("should implement less than for numbers", () => {
+    expect(eva.eval(["<", 1, 2])).toBe(true);
+    expect(eva.eval(["<", 2, 1])).toBe(false);
+
+    console.log(eva.eval(["=", "true", "false"]));
+  });
+
+  // Logical
+  it("should implement logical for &&", () => {
+    expect(eva.eval(["&&", "true", "true"])).toBe(true);
+    expect(eva.eval(["&&", "true", "false"])).toBe(false);
+    expect(eva.eval(["&&", "false", "false"])).toBe(false);
+
+    expect(eva.eval(["begin", ["var", "x", 10], ["&&", [">", "x", 5], ["=", "x", 10]]])).toBe(true);
+    expect(eva.eval(["begin", ["var", "x", 10], ["and", [">", "x", 5], ["=", "x", 10]]])).toBe(
+      true,
+    );
+  });
+
+  it("should implement logical for ||", () => {
+    expect(eva.eval(["||", "true", "true"])).toBe(true);
+    expect(eva.eval(["or", "true", "false"])).toBe(true);
+  });
+
+  it("should implement logical for not", () => {
+    expect(eva.eval(["not", "true"])).toBe(false);
+    expect(eva.eval(["!", "true"])).toBe(false);
   });
 });
 
@@ -307,7 +339,7 @@ describe("Implement syntax sugar", () => {
 });
 
 describe("Implement OOP", () => {
-  it.only("should can use class", () => {
+  it("should can use class", () => {
     const code = parser(`(begin
         (class Point null
           (begin
@@ -331,5 +363,60 @@ describe("Implement OOP", () => {
 
     expect(eva.eval(code)).toBe(30);
   });
-  it("should can use prototype", () => {});
+
+  it.only("should can use prototype", () => {
+    const code = parser(`(begin
+         (class Point null
+          (begin
+             (fn constructor (this x y)
+              (begin
+                (set (prop this x) x)
+                (set (prop this y) y)
+              )
+            )
+
+            (fn calc (this)
+              (+ (prop this x) (prop this y))
+            )
+          )
+         
+        )
+
+        (class Point3D Point
+          (begin
+             (fn constructor (this x y z)
+              (begin
+                ((prop (super Point3D) constructor) this x y)
+                (set (prop this z) z)
+              )
+            )
+
+            (fn calc (this)
+              (+ ((prop (super Point3D) calc) this) (prop this z))
+            )
+          )
+         
+        )
+
+        (var p (new Point3D 10 20 30))
+        ((prop p calc) p)
+      )`);
+
+    /**
+     * why this not ok?
+     * Friist check test error information, find "if (expr[0] === "set")" condition, console.log(), postion:
+     * const instanceEnv = this.eval(instance, env); instanceEnv is not env? why, I print after env
+     *
+     *  Environment {
+          record: {
+            this: 10,
+            x: 20,
+            y: undefined
+          },
+          parent: ....
+     * 2026-08-31
+     */
+
+    expect(eva.eval(code)).toBe(60);
+  });
 });

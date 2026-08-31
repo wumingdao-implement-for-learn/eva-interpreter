@@ -16,6 +16,13 @@ export class Eva {
   }
 
   /**
+   * Evaluates global code wrapping into a block.
+   */
+  evalGlobal(expression) {
+    return this._evalBlock(["begin", expression], this.global);
+  }
+
+  /**
    * Evaluate an expression in the given environment
    */
   eval(expr, env = this.global) {
@@ -58,6 +65,7 @@ export class Eva {
       // Assignments to properties:
       if (ref[0] === "prop") {
         const [_tag, instance, propName] = ref;
+        log.info(env);
         const instanceEnv = this.eval(instance, env);
 
         return instanceEnv.define(propName, this.eval(value, env));
@@ -181,6 +189,45 @@ export class Eva {
     }
 
     /**
+     * Logic operators: (&& a b) (|| a b)
+     */
+    if (expr[0] === "&&") {
+      const [_tag, op1, op2] = expr;
+
+      return this.eval(op1, env) && this.eval(op2, env);
+    }
+
+    if (expr[0] === "and") {
+      const [_tag, op1, op2] = expr;
+
+      return this.eval(op1, env) && this.eval(op2, env);
+    }
+
+    if (expr[0] === "||") {
+      const [_tag, op1, op2] = expr;
+
+      return this.eval(op1, env) || this.eval(op2, env);
+    }
+
+    if (expr[0] === "or") {
+      const [_tag, op1, op2] = expr;
+
+      return this.eval(op1, env) || this.eval(op2, env);
+    }
+
+    if (expr[0] === "!") {
+      const [_tag, op] = expr;
+
+      return !this.eval(op, env);
+    }
+
+    if (expr[0] === "not") {
+      const [_tag, op] = expr;
+
+      return !this.eval(op, env);
+    }
+
+    /**
      * Lambda Function Definition: (lambda (x) (* x x))
      */
     if (expr[0] === "lambda") {
@@ -218,6 +265,7 @@ export class Eva {
      * Class instantiation: (<new><class><args>...)
      */
     if (expr[0] === "new") {
+      // console.log(expr);
       const classNev = this.eval(expr[1], env);
 
       // An instance of a class is an environment!
@@ -228,6 +276,8 @@ export class Eva {
       const args = expr.slice(2).map((arg) => this.eval(arg, env));
 
       this._callUserDefinedFunction(classNev.lookup("constructor"), [instanceEnv, ...args]);
+
+      // log.info(instanceEnv);
 
       return instanceEnv;
     }
@@ -241,6 +291,15 @@ export class Eva {
       const instanceEnv = this.eval(instance, env);
 
       return instanceEnv.lookup(name);
+    }
+
+    /**
+     * Super expression: (super <className>)
+     */
+    if (expr[0] === "super") {
+      const [_tag, className] = expr;
+
+      return this.eval(className, env).parent;
     }
 
     /**
