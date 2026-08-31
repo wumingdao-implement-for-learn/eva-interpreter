@@ -2,6 +2,57 @@
 
 [comilper explorer](https://godbolt.org)
 
+## How use
+
+```
+pnpm i
+
+pnpm test # runner all test
+
+### run in cli
+mkdir -p bin
+touch bin/eva
+chmod +x bin/eva
+
+./bin/eva -e "(+ 1 2)"
+./bin/eva -f ./your_file_path/*.eva
+./bin/eva -f ./src/app.eva # just use
+```
+
+This code copy to ./bin/eva of eva file
+
+```javascript
+#!/usr/bin/env node
+import { readFileSync } from "node:fs";
+
+import evaParser from "../parser/evaParser.cjs";
+import { Eva } from "../Eva.js";
+
+function evalGlobal(src, eva) {
+  const expr = evaParser.parse(`(begin ${src})`);
+  return eva.evalGlobal(expr);
+}
+
+function main(argv) {
+  const [_node, _path, mode, exp] = argv;
+
+  const eva = new Eva();
+
+  // Direct expression
+  if (mode === "-e") {
+    return evalGlobal(exp, eva);
+  }
+
+  // Eva File
+  if (mode === "-f") {
+    const src = readFileSync(exp, "utf-8");
+    return evalGlobal(src, eva);
+  }
+}
+
+main(process.argv);
+```
+
 ## Intro
 
 runtime semantics
