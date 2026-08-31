@@ -442,7 +442,7 @@ describe("Impement module", () => {
     const code = parser(`(begin
         (import Math)
 
-        ((prop Math abs) 10)
+        ((prop Math abs) (- 10))
       )`);
 
     expect(eva.eval(code)).toBe(10);

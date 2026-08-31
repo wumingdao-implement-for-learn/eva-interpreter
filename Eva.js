@@ -431,7 +431,7 @@ const GlobalEnvironment = new Environment({
   },
 
   "-": (op1, op2) => {
-    if (op2 === null) {
+    if (!op2) {
       return -op1;
     }
     return op1 - op2;
