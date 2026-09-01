@@ -1,17 +1,17 @@
-import { Environment } from "./Environment.js";
-import { Transformer } from "./Transformer.js";
+import { createRequire } from "module";
 
+import { Environment } from "./Environment.js";
 // import { syncReadFile } from "node:fs/promises";
 // import evaParser from "./parser/evaParser";
-
-import { createRequire } from "module";
+import { Transformer } from "./Transformer.js";
 const require = createRequire(import.meta.url);
 
 const evaParser = require("../parser/evaParser.cjs");
 
-import { log } from "../log.js";
 // import { readFileSync } from "node:fs";
 import { readFileSync } from "node:fs";
+
+import { log } from "../log.js";
 
 const parser = (code) => evaParser.parse(code);
 
