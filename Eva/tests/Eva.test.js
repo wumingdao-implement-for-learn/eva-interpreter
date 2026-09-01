@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { Eva } from "./Eva";
-import evaParser from "./parser/evaParser.cjs";
+import { Eva } from "../src/Eva";
+import evaParser from "../parser/evaParser.cjs";
 
 /**
  * Expr ::= Number | String | [+ Number Number] | [+ Expr Expr]
@@ -451,7 +451,7 @@ describe("Impement module", () => {
 });
 
 describe("Implement Structure", () => {
-  it.only("should use keywork for structure", () => {
+  it("should use keywork for structure", () => {
     const code = parser(`(begin
         (struct Cat (begin
           (fn constructor (this name age)

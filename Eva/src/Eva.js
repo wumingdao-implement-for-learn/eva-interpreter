@@ -7,9 +7,9 @@ import { Transformer } from "./Transformer.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-const evaParser = require("./parser/evaParser.cjs");
+const evaParser = require("../parser/evaParser.cjs");
 
-import { log } from "./log.js";
+import { log } from "../log.js";
 // import { readFileSync } from "node:fs";
 import { readFileSync } from "node:fs";
 
@@ -342,7 +342,7 @@ export class Eva {
     if (expr[0] === "import") {
       const [_tag, moduleName] = expr;
 
-      const module = readFileSync(`${process.cwd()}/modules/${moduleName}.eva`, "utf-8");
+      const module = readFileSync(`${process.cwd()}/Eva/modules/${moduleName}.eva`, "utf-8");
 
       const body = parser(`(begin ${module})`);
 
