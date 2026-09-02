@@ -76,3 +76,118 @@ describe("Implement Parser", () => {
     });
   });
 });
+
+describe("Implement statement", () => {
+  it("should parse block statement", () => {
+    const Program = `{
+      42;
+
+      "hello world";
+    }`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: [
+        {
+          type: "BlockStatement",
+          body: [
+            {
+              type: "ExpressionStatement",
+              expression: {
+                type: "NumbericLiteral",
+                value: 42,
+              },
+            },
+            {
+              type: "ExpressionStatement",
+              expression: {
+                type: "StringLiteral",
+                value: "hello world",
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("should parse nest block statement", () => {
+    const Program = `{
+      42;
+
+      {
+        "hello world";
+      }
+    }`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: [
+        {
+          type: "BlockStatement",
+          body: [
+            {
+              type: "ExpressionStatement",
+              expression: {
+                type: "NumbericLiteral",
+                value: 42,
+              },
+            },
+            {
+              type: "BlockStatement",
+              body: [
+                {
+                  type: "ExpressionStatement",
+                  expression: {
+                    type: "StringLiteral",
+                    value: "hello world",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("should parse void block statement", () => {
+    const Program = `{
+      
+    }`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: [
+        {
+          type: "BlockStatement",
+          body: [],
+        },
+      ],
+    });
+  });
+
+  it("should parse empty statement", () => {
+    const Program = `{
+      ;
+    }`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: [
+        {
+          type: "BlockStatement",
+          body: [
+            {
+              type: "EmptyStatement",
+            },
+          ],
+        },
+      ],
+    });
+  });
+});
