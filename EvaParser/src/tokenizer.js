@@ -17,6 +17,11 @@ const Spec = [
   // skip multi line comments
   [/^\/\*[\s\S]*?\*\//, null],
 
+  /**
+   * Symbols, delimeters
+   */
+  [/^;/, ";"],
+
   [
     /**
      * Number

@@ -6,33 +6,43 @@ const parser = new Parser();
 
 describe("Implement Parser", () => {
   it("should parse number", () => {
-    const Program = `42`;
+    const Program = `42;`;
     const ast = parser.parse(Program);
 
     expect(ast).toEqual({
       type: "Program",
-      body: {
-        type: "NumbericLiteral",
-        value: 42,
-      },
+      body: [
+        {
+          type: "ExpressionStatement",
+          expression: {
+            type: "NumbericLiteral",
+            value: 42,
+          },
+        },
+      ],
     });
   });
 
   it("should parse string", () => {
-    const Program = `'hello world'`;
+    const Program = `'hello world';`;
     const ast = parser.parse(Program);
 
     expect(ast).toEqual({
       type: "Program",
-      body: {
-        type: "StringLiteral",
-        value: "hello world",
-      },
+      body: [
+        {
+          type: "ExpressionStatement",
+          expression: {
+            type: "StringLiteral",
+            value: "hello world",
+          },
+        },
+      ],
     });
   });
 
   it("should parse string and number", () => {
-    const Program = `"hello world" 42
+    const Program = `"hello world"; 42;
       // Number
 
       /*
@@ -47,10 +57,22 @@ describe("Implement Parser", () => {
 
     expect(ast).toEqual({
       type: "Program",
-      body: {
-        type: "StringLiteral",
-        value: "hello world",
-      },
+      body: [
+        {
+          type: "ExpressionStatement",
+          expression: {
+            type: "StringLiteral",
+            value: "hello world",
+          },
+        },
+        {
+          type: "ExpressionStatement",
+          expression: {
+            type: "NumbericLiteral",
+            value: 42,
+          },
+        },
+      ],
     });
   });
 });

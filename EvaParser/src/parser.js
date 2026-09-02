@@ -23,7 +23,7 @@ export class Parser {
     /**
      * Get the first token
      */
-    this.lookahead = this._tokenizer.getNextToken();
+    this._lookahead = this._tokenizer.getNextToken();
 
     return this.Program();
   }
@@ -32,14 +32,63 @@ export class Parser {
    * Main entry point
    *
    * Program
-   *    :Literal
+   *    : StatementList
    *    ;
    */
   Program() {
     return {
       type: "Program",
-      body: this.Literal(),
+      body: this.StatementList(),
     };
+  }
+
+  /**
+   * StatementList
+   *    : Statement
+   *    | StatementList Statement -> [Statement, Statement, ...]
+   *    ;
+   */
+  StatementList() {
+    const statementList = [this.Statement()];
+
+    while (this._lookahead !== null) {
+      statementList.push(this.Statement());
+    }
+
+    return statementList;
+  }
+
+  /**
+   * Statement
+   *    : ExpressionStatement
+   *    ;
+   */
+  Statement() {
+    return this.ExpressionStatement();
+  }
+
+  /**
+   * ExpressionStatement
+   *    : Expression
+   *    ;
+   */
+
+  ExpressionStatement() {
+    const expression = this.Expression();
+    this._eat(";");
+    return {
+      type: "ExpressionStatement",
+      expression,
+    };
+  }
+
+  /**
+   * Expression
+   *  : Literal
+   *  ;
+   */
+  Expression() {
+    return this.Literal();
   }
 
   /**
@@ -49,13 +98,13 @@ export class Parser {
    *    ;
    */
   Literal() {
-    switch (this.lookahead.type) {
+    switch (this._lookahead.type) {
       case "NUMBER":
         return this.NumbericLiteral();
       case "STRING":
         return this.StringLiteral();
     }
-    throw new SyntaxError(`Literal: unexpected literal ${this.lookahead.type}`);
+    throw new SyntaxError(`Literal: unexpected literal ${this._lookahead.type}`);
   }
 
   /**
@@ -88,7 +137,7 @@ export class Parser {
    * Expecs a token of given type
    */
   _eat(tokenType) {
-    const token = this.lookahead;
+    const token = this._lookahead;
 
     if (token === null) {
       throw new SyntaxError(`Unexpected end of input, expected: ${tokenType}`);
@@ -99,7 +148,7 @@ export class Parser {
     }
 
     // Advance the lookahead
-    this.lookahead = this._tokenizer.getNextToken();
+    this._lookahead = this._tokenizer.getNextToken();
 
     return token;
   }
