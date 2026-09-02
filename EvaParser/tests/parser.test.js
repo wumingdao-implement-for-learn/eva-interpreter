@@ -10,8 +10,11 @@ describe("Implement Parser", () => {
     const ast = parser.parse(Program);
 
     expect(ast).toEqual({
-      type: "NumbericLiteral",
-      value: 42,
+      type: "Program",
+      body: {
+        type: "NumbericLiteral",
+        value: 42,
+      },
     });
   });
 });
