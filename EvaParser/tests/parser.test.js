@@ -17,4 +17,30 @@ describe("Implement Parser", () => {
       },
     });
   });
+
+  it("should parse string", () => {
+    const Program = `'hello world'`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: {
+        type: "StringLiteral",
+        value: "hello world",
+      },
+    });
+  });
+
+  it("should parse string and number", () => {
+    const Program = `"hello world" 20 'hello'`;
+    const ast = parser.parse(Program);
+
+    expect(ast).toEqual({
+      type: "Program",
+      body: {
+        type: "StringLiteral",
+        value: "hello world",
+      },
+    });
+  });
 });

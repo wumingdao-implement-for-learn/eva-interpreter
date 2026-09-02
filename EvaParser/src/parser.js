@@ -32,14 +32,30 @@ export class Parser {
    * Main entry point
    *
    * Program
-   *    : NumbericLiteral
+   *    :Literal
    *    ;
    */
   Program() {
     return {
       type: "Program",
-      body: this.NumbericLiteral(),
+      body: this.Literal(),
     };
+  }
+
+  /**
+   * Literal
+   *    : NumbericLiteral
+   *    | StringLiteral
+   *    ;
+   */
+  Literal() {
+    switch (this.lookahead.type) {
+      case "NUMBER":
+        return this.NumbericLiteral();
+      case "STRING":
+        return this.StringLiteral();
+    }
+    throw new SyntaxError(`Literal: unexpected literal ${this.lookahead.type}`);
   }
 
   /**
@@ -52,6 +68,19 @@ export class Parser {
     return {
       type: "NumbericLiteral",
       value: Number(token.value),
+    };
+  }
+
+  /**
+   * StringLiteral
+   *    : STRING
+   *    ;
+   */
+  StringLiteral() {
+    const token = this._eat("STRING");
+    return {
+      type: "StringLiteral",
+      value: token.value.slice(1, -1),
     };
   }
 

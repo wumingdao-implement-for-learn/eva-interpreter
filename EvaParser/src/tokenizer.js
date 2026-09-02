@@ -15,6 +15,13 @@ export class Tokenizer {
   }
 
   /**
+   * Whther the tokenizer reached EOF
+   */
+  isEOF() {
+    return this._cursor === this._string.length;
+  }
+
+  /**
    * Obtains the next token
    */
   getNextToken() {
@@ -34,6 +41,33 @@ export class Tokenizer {
       return {
         type: "NUMBER",
         value: Number(number),
+      };
+    }
+
+    // string
+    if (string[0] === '"') {
+      let s = "";
+      do {
+        s += string[this._cursor++];
+      } while (string[this._cursor] !== '"' && !this.isEOF());
+
+      s += string[this._cursor++]; // Closing quote
+      return {
+        type: "STRING",
+        value: s,
+      };
+    }
+
+    if (string[0] === "'") {
+      let s = "";
+      do {
+        s += string[this._cursor++];
+      } while (string[this._cursor] !== "'" && !this.isEOF());
+
+      s += string[this._cursor++]; // Closing quote
+      return {
+        type: "STRING",
+        value: s,
       };
     }
 
