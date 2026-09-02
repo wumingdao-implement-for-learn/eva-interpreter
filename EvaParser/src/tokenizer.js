@@ -1,3 +1,37 @@
+/**
+ * Tokenizer spec.
+ */
+const Spec = [
+  /**
+   * Whitespace: like ` `
+   */
+  [/^\s+/, null],
+
+  /**
+   * Comments: like `//`
+   */
+
+  // skip single line comments
+  [/^\/\/.*/, null],
+
+  // skip multi line comments
+  [/^\/\*[\s\S]*?\*\//, null],
+
+  [
+    /**
+     * Number
+     */
+    /^\d+/,
+    "NUMBER",
+  ],
+
+  /**
+   * String
+   */
+  [/^"[^"]*"/, "STRING"],
+  [/^'[^']*'/, "STRING"],
+];
+
 export class Tokenizer {
   /**
    * Initializes the string
@@ -11,7 +45,7 @@ export class Tokenizer {
    * Checks if there are more tokens
    */
   hasMoreTokens() {
-    return this._cursor <= this._string.length;
+    return this._cursor <= this._string.length - 1;
   }
 
   /**
@@ -31,44 +65,32 @@ export class Tokenizer {
 
     const string = this._string.slice(this._cursor);
 
-    // Number
-    if (!Number.isNaN(Number(string[0]))) {
-      let number = "";
-      while (!Number.isNaN(Number(string[this._cursor]))) {
-        number += string[this._cursor++];
+    for (const [regexp, tokenType] of Spec) {
+      const tokenValue = this._match(regexp, string);
+
+      // Cannot match this rule, continue
+      if (tokenValue === null) {
+        continue;
+      }
+
+      if (tokenType === null) {
+        return this.getNextToken();
       }
 
       return {
-        type: "NUMBER",
-        value: Number(number),
+        type: tokenType,
+        value: tokenValue,
       };
     }
 
-    // string
-    if (string[0] === '"') {
-      let s = "";
-      do {
-        s += string[this._cursor++];
-      } while (string[this._cursor] !== '"' && !this.isEOF());
+    throw new SyntaxError(`Unexpected token: ${string[0]}`);
+  }
 
-      s += string[this._cursor++]; // Closing quote
-      return {
-        type: "STRING",
-        value: s,
-      };
-    }
-
-    if (string[0] === "'") {
-      let s = "";
-      do {
-        s += string[this._cursor++];
-      } while (string[this._cursor] !== "'" && !this.isEOF());
-
-      s += string[this._cursor++]; // Closing quote
-      return {
-        type: "STRING",
-        value: s,
-      };
+  _match(regexp, string) {
+    const matched = regexp.exec(string);
+    if (matched !== null) {
+      this._cursor += matched[0].length;
+      return matched[0];
     }
 
     return null;

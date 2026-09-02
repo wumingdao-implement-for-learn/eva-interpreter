@@ -32,7 +32,17 @@ describe("Implement Parser", () => {
   });
 
   it("should parse string and number", () => {
-    const Program = `"hello world" 20 'hello'`;
+    const Program = `"hello world" 42
+      // Number
+
+      /*
+      * hello
+      */
+
+      /*hello
+      
+      */
+    `;
     const ast = parser.parse(Program);
 
     expect(ast).toEqual({
