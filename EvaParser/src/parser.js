@@ -1,5 +1,80 @@
 import { Tokenizer } from "./tokenizer";
 
+// Default AST node factories
+
+const DefaultFactory = {
+  Program(body) {
+    return {
+      type: "Program",
+      body,
+    };
+  },
+
+  EmptyStatement() {
+    return {
+      type: "EmptyStatement",
+    };
+  },
+
+  BlockStatement(body) {
+    return {
+      type: "BlockStatement",
+      body,
+    };
+  },
+
+  ExpressionStatement(expression) {
+    return {
+      type: "ExpressionStatement",
+      expression,
+    };
+  },
+
+  NumbericLiteral(value) {
+    return {
+      type: "NumbericLiteral",
+      value,
+    };
+  },
+
+  StringLiteral(value) {
+    return {
+      type: "StringLiteral",
+      value,
+    };
+  },
+};
+
+// S-experssion AST node factories
+
+const SExpressionFactory = {
+  Program(body) {
+    return ["begin", body];
+  },
+
+  EmptyStatement() {},
+
+  BlockStatement(body) {
+    return ["begin", body];
+  },
+
+  ExpressionStatement(expression) {
+    return expression;
+  },
+
+  NumbericLiteral(value) {
+    return value;
+  },
+
+  StringLiteral(value) {
+    return `"value"`;
+  },
+};
+
+const AST_MODE = "default";
+
+const factoy = AST_MODE === "default" ? DefaultFactory : SExpressionFactory;
+
 /**
  * letter parser of recursive descent implementation
  */
@@ -36,10 +111,7 @@ export class Parser {
    *    ;
    */
   Program() {
-    return {
-      type: "Program",
-      body: this.StatementList(),
-    };
+    return factoy.Program(this.StatementList());
   }
 
   /**
@@ -83,9 +155,7 @@ export class Parser {
    */
   EmptyStatement() {
     this._eat(";");
-    return {
-      type: "EmptyStatement",
-    };
+    return factoy.EmptyStatement();
   }
 
   /**
@@ -97,10 +167,7 @@ export class Parser {
     this._eat("{");
     const body = this._lookahead.type !== "}" ? this.StatementList("}") : [];
     this._eat("}");
-    return {
-      type: "BlockStatement",
-      body,
-    };
+    return factoy.BlockStatement(body);
   }
 
   /**
@@ -112,10 +179,7 @@ export class Parser {
   ExpressionStatement() {
     const expression = this.Expression();
     this._eat(";");
-    return {
-      type: "ExpressionStatement",
-      expression,
-    };
+    return factoy.ExpressionStatement(expression);
   }
 
   /**
@@ -150,10 +214,7 @@ export class Parser {
    */
   NumbericLiteral() {
     const token = this._eat("NUMBER");
-    return {
-      type: "NumbericLiteral",
-      value: Number(token.value),
-    };
+    return factoy.NumbericLiteral(Number(token.value));
   }
 
   /**
@@ -163,10 +224,7 @@ export class Parser {
    */
   StringLiteral() {
     const token = this._eat("STRING");
-    return {
-      type: "StringLiteral",
-      value: token.value.slice(1, -1),
-    };
+    return factoy.StringLiteral(token.value.slice(1, -1));
   }
 
   /**
